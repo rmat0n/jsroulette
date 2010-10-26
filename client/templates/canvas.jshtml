@@ -1,0 +1,92 @@
+<html>
+	<head></head>
+	<body onload="draw()" style="background: whitesmoke">
+		<script type="application/javascript">
+			// Globals
+			var global = {
+				indice: 0,
+				intervalId: null
+			};
+			
+			// People list
+			var people = {
+				list:[
+					{firstname:"romain", lastname:"maton"},
+					{firstname:"nicolas", lastname:"jozwiak"},
+					{firstname:"ellene", lastname:"dijoux"},
+					{firstname:"romain", lastname:"schlick"},
+					{firstname:"nicolas", lastname:"griso"},
+					{firstname:"guillaume", lastname:"bodet"},
+					{firstname:"foo", lastname:"bar"},
+					{firstname:"cyrille", lastname:"leclerc"},
+					{firstname:"michael", lastname:"figuiere"},
+					{firstname:"seven", lastname:"lemesle"},
+					{firstname:"aurelien", lastname:"maury"},
+					{firstname:"baz", lastname:"qux"},
+					{firstname:"romain", lastname:"maton"},
+					{firstname:"nicolas", lastname:"jozwiak"},
+					{firstname:"ellene", lastname:"dijoux"},
+					{firstname:"romain", lastname:"schlick"},
+					{firstname:"nicolas", lastname:"griso"},
+					{firstname:"guillaume", lastname:"bodet"},
+					{firstname:"foo", lastname:"bar"},
+					{firstname:"cyrille", lastname:"leclerc"},
+					{firstname:"michael", lastname:"figuiere"},
+					{firstname:"seven", lastname:"lemesle"},
+					{firstname:"aurelien", lastname:"maury"},
+					{firstname:"baz", lastname:"qux"},
+				]
+			};
+			
+			var rectHauteur = function(index) {
+				return 25+(index<6 ? index : 12-index)*5;
+			}
+			
+			var textHauteur = function(index) {
+				return rectHauteur(index)+(index<6 ? rectHauteur(index)/14 : -rectHauteur(index)/14);
+			}
+			
+			var textFont = function(index) {
+				return 10+(index<6 ? index*2 : (12-index)*2);
+			}
+			
+			var draw = function() {
+				// Canvas object
+				var canvas = document.getElementById("canvas");  
+				var ctx = canvas.getContext("2d");
+				
+				// Background color
+				ctx.fillStyle = "lightblue";  
+	 			ctx.fillRect(0, 0, canvas.width, canvas.height);
+	 			
+	 			// Rectangles
+				ctx.strokeStyle = "white";
+				ctx.lineWidth = 3;
+				var rectPos = 1;
+				for(var i in people.list) {
+					if(rectPos < canvas.height) {
+						var index = parseInt(i);
+		 				ctx.strokeRect(1, rectPos, 398, rectHauteur(index));
+						rectPos += rectHauteur(index);
+					}
+		 		}
+	 			
+	 			// Print people
+				ctx.fillStyle = "red";
+				ctx.textAlign = "center";
+				var textPos = 17.5;
+				for(var i in people.list) {
+					var index = parseInt(i);
+					ctx.font = textFont(index)+"pt Arial";
+		 			ctx.fillText(people.list[(global.indice+index)%20].firstname+" "+people.list[(global.indice+index)%20].lastname, canvas.width/2, textPos);
+					textPos += textHauteur(index);
+		 		}
+		 		
+		 		// Maximize indice
+				global.indice++;
+			}
+		</script>
+		<canvas id="canvas" width="350" height="506"></canvas>
+		<input type="button" value="LET'S GO !!!" onclick="this.disabled=true;javascript:global.intervalId=setInterval(draw, 50);" style="position:absolute;" />
+	</body>
+</html>
