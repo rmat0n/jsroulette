@@ -2,91 +2,106 @@
 	<head></head>
 	<body onload="draw()" style="background: whitesmoke">
 		<script type="application/javascript">
-			// Globals
+			/** Globals. */
 			var global = {
 				indice: 0,
+				speedIndex: 0,
+				winnerIndex: 0,
 				intervalId: null
 			};
 			
-			// People list
-			var people = {
-				list:[
-					{firstname:"romain", lastname:"maton"},
-					{firstname:"nicolas", lastname:"jozwiak"},
-					{firstname:"ellene", lastname:"dijoux"},
-					{firstname:"romain", lastname:"schlick"},
-					{firstname:"nicolas", lastname:"griso"},
-					{firstname:"guillaume", lastname:"bodet"},
-					{firstname:"foo", lastname:"bar"},
-					{firstname:"cyrille", lastname:"leclerc"},
-					{firstname:"michael", lastname:"figuiere"},
-					{firstname:"seven", lastname:"lemesle"},
-					{firstname:"aurelien", lastname:"maury"},
-					{firstname:"baz", lastname:"qux"},
-					{firstname:"romain", lastname:"maton"},
-					{firstname:"nicolas", lastname:"jozwiak"},
-					{firstname:"ellene", lastname:"dijoux"},
-					{firstname:"romain", lastname:"schlick"},
-					{firstname:"nicolas", lastname:"griso"},
-					{firstname:"guillaume", lastname:"bodet"},
-					{firstname:"foo", lastname:"bar"},
-					{firstname:"cyrille", lastname:"leclerc"},
-					{firstname:"michael", lastname:"figuiere"},
-					{firstname:"seven", lastname:"lemesle"},
-					{firstname:"aurelien", lastname:"maury"},
-					{firstname:"baz", lastname:"qux"},
-				]
+			/** People list. */
+			var people = { list:[] };
+			for(var i=0; i<27; i++) people.list[i]={firstname:i, lastname:i+""+i+""+i};
+			
+			var randomize = function() {
+			    global.indice = Math.floor(Math.random()*people.list.length);
 			};
 			
 			var rectHauteur = function(index) {
 				return 25+(index<6 ? index : 12-index)*5;
-			}
-			
+			};
 			var textHauteur = function(index) {
 				return rectHauteur(index)+(index<6 ? rectHauteur(index)/14 : -rectHauteur(index)/14);
-			}
-			
+			};
 			var textFont = function(index) {
 				return 10+(index<6 ? index*2 : (12-index)*2);
-			}
+			};
 			
+			/** Run wheel. */
+			var run = function() {
+			    document.getElementById("go").disabled=true;
+			    if(global.intervalId) people.list.splice(global.winnerIndex%people.list.length, 1);
+                global.indice=0;
+                global.speedIndex=0;
+                global.winnerIndex=0;
+			    randomize();
+			    global.intervalId=setInterval(draw, 30);
+			};
+			
+			/** Draw function to setIntervalize. */
 			var draw = function() {
-				// Canvas object
-				var canvas = document.getElementById("canvas");  
-				var ctx = canvas.getContext("2d");
-				
-				// Background color
-				ctx.fillStyle = "lightblue";  
-	 			ctx.fillRect(0, 0, canvas.width, canvas.height);
-	 			
-	 			// Rectangles
-				ctx.strokeStyle = "white";
-				ctx.lineWidth = 3;
-				var rectPos = 1;
-				for(var i in people.list) {
-					if(rectPos < canvas.height) {
-						var index = parseInt(i);
-		 				ctx.strokeRect(1, rectPos, 398, rectHauteur(index));
-						rectPos += rectHauteur(index);
-					}
-		 		}
-	 			
-	 			// Print people
-				ctx.fillStyle = "red";
-				ctx.textAlign = "center";
-				var textPos = 17.5;
-				for(var i in people.list) {
-					var index = parseInt(i);
-					ctx.font = textFont(index)+"pt Arial";
-		 			ctx.fillText(people.list[(global.indice+index)%20].firstname+" "+people.list[(global.indice+index)%20].lastname, canvas.width/2, textPos);
-					textPos += textHauteur(index);
-		 		}
-		 		
-		 		// Maximize indice
-				global.indice++;
-			}
+                if(global.speedIndex < 20 || (global.speedIndex<40 && global.speedIndex%3==0)
+                        || (global.speedIndex<60 && global.speedIndex%6==0)
+                        || (global.speedIndex<80 && global.speedIndex%9==0) || global.speedIndex==80) {
+                    // Canvas object
+                    var canvas = document.getElementById("canvas");  
+                    var ctx = canvas.getContext("2d");
+                      
+                    // Background color
+                    ctx.fillStyle = "lightblue";  
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                      
+                    // Rectangles
+                    ctx.strokeStyle = "white";
+                    ctx.lineWidth = 3;
+                    var rectPos = 1;
+                    for(var i in people.list) {
+                       if(rectPos < canvas.height) {
+                            var index = parseInt(i);
+                            ctx.strokeRect(1, rectPos, canvas.width-2, rectHauteur(index));
+                            rectPos += rectHauteur(index);
+                       }
+                    }
+                    
+                    // Triangles
+                    ctx.fillStyle = "white";
+                    ctx.lineWidth = 3;
+                    ctx.moveTo(1, canvas.height/2-10);
+                    ctx.lineTo(20,canvas.height/2);
+                    ctx.lineTo(1,canvas.height/2+10);
+                    ctx.fill();
+                    ctx.moveTo(canvas.width-1, canvas.height/2-10);
+                    ctx.lineTo(canvas.width-21,canvas.height/2);
+                    ctx.lineTo(canvas.width-1,canvas.height/2+10);
+                    ctx.fill();
+                      
+                    // Print people
+                    ctx.fillStyle = "red";
+                    ctx.textAlign = "center";
+                    var textPos = 17.5;
+                    for(var i in people.list) {
+                       var index = parseInt(i);
+                       ctx.font = textFont(index)+"pt Arial";
+                       if(22==textFont(index)) global.winnerIndex=global.indice+index;
+                       var peopleIndex = (global.indice+index)%people.list.length;
+                       ctx.fillText(people.list[peopleIndex].firstname+" "+people.list[peopleIndex].lastname, canvas.width/2, textPos);
+                       textPos += textHauteur(index);
+                    }
+                    global.indice++;
+                }
+                      
+                // Maximize speed index
+                global.speedIndex++;
+                
+                // Manage ending
+                if(global.speedIndex==80) {
+                    clearInterval(global.intervalId);
+                    document.getElementById("go").disabled=false;
+                }
+			};
 		</script>
 		<canvas id="canvas" width="350" height="506"></canvas>
-		<input type="button" value="LET'S GO !!!" onclick="this.disabled=true;javascript:global.intervalId=setInterval(draw, 50);" style="position:absolute;" />
+		<input id="go" type="button" value="LET'S GO !!!" onclick="run();" style="position:absolute;" />
 	</body>
 </html>

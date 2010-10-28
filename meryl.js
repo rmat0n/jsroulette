@@ -30,3 +30,4 @@ meryl.p('GET /private/*', function (req, resp, next) {
 });
   
 require('http').createServer(meryl.cgi(opts)).listen(8090, "localhost");
+require('sys').debug('Serving http://localhost:8090/');
