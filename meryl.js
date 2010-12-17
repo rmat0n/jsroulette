@@ -21,6 +21,9 @@ meryl.h('GET /template/{param}', function (req, resp) {
 meryl.h('GET /canvas', function (req, resp) {
   resp.render('canvas');
 });
+meryl.h('GET /canvas2', function (req, resp) {
+  resp.render('canvas2');
+});
 
 meryl.p(function (req, resp, next) {
   console.log(req.params.pathname); next();
@@ -28,6 +31,6 @@ meryl.p(function (req, resp, next) {
 meryl.p('GET /private/*', function (req, resp, next) {
   resp.status = 401; throw 'Forbidden';
 });
-  
+
 require('http').createServer(meryl.cgi(opts)).listen(8090, "localhost");
 require('sys').debug('Serving http://localhost:8090/');

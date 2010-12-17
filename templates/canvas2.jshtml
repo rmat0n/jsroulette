@@ -12,20 +12,15 @@
 			
 			/** Shuffling an array. */
 			var shuffle = function (a) {
-               var j = 0;
-               var valI = "";
-               var valJ = valI;
-               var l = a.length - 1;
-               while(l > -1) {
+                var j = 0, valI = "";
+                var valJ = valI;
+                var l = a.length - 1;
+                while(l > -1) {
                     j = Math.floor(Math.random() * l);
-                    valI = a[l];
-                    valJ = a[j];
-                    a[l] = valJ;
-                    a[j] = valI;
-                    l = l - 1;
+                    valI = a[l]; valJ = a[j]; a[l] = valJ; a[j] = valI; l -= 1;
                 }
                 return a;
-             }
+            }
 			
 			/** People list. */
 			var index = 0;
@@ -164,8 +159,7 @@
                     clearInterval(global.intervalId);
                     document.getElementById("go").disabled=false;
                     var winner = people.list[global.winnerIndex%people.list.length];
-                    console.log(global.winnerIndex%people.list.length);
-                    console.log(people.list[global.winnerIndex%people.list.length]);
+                    console.log("Winner : " + global.winnerIndex%people.list.length + ", " + winner.firstname + " " + winner.lastname);
                     document.getElementById("winners").innerHTML = document.getElementById("winners").innerHTML + "<div>"+winner.firstname+" "+winner.lastname+"<\/div>"; 
                 }
 			};
