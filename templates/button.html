@@ -1,0 +1,16 @@
+<html>
+	<head>
+        <script src="/socket.io/socket.io.js"></script>
+    </head>
+	<body onload="draw()" style="background: whitesmoke">
+        <script> 
+            var socket = new io.Socket(null, {port: 8080, rememberTransport: false}); 
+            socket.connect();
+            socket.on('connect', function() { socket.send("button connected") }) 
+            socket.on('message', function(data) { if("wheel"!=data) alert(data); }) 
+            socket.on('disconnect', function() { socket.send("button disconnected") }) 
+            var send = function() { socket.send("wheel"); }
+        </script>
+        <a href="#" onclick="send();">Click me</a>
+	</body>
+</html>
