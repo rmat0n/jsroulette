@@ -19,7 +19,6 @@ meryl.h('GET /', function (req, resp) {
 	    resp.render('button');
 	} else {
         fs.readFile(__dirname + '/users.raw', function(err2, users) {
-            sys.debug(users);
             resp.render('roulette', {'users': users});
         });
     }
@@ -27,7 +26,8 @@ meryl.h('GET /', function (req, resp) {
 var server = http.createServer(meryl.cgi(opts));
 server.listen(9010);
 
-var socket = io.listen(server); 
+var socket = io.listen(server);
+
 socket.on('connection', function(client) {
     client.on('message', function(data){ client.broadcast(data); });
 }); 

@@ -3,14 +3,12 @@
     	<script src="http://code.jquery.com/jquery-1.5.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
     </head>
-	<body onload="draw()" style="background: whitesmoke">
+	<body style="background: whitesmoke">
 		<script type="application/javascript">
 		    /** Web Socket. */
-            var socket = new io.Socket(null, {port: 8080, rememberTransport: false}); 
+            var socket = new io.Socket(null, {port: 9010, rememberTransport: false}); 
             socket.connect();
-            socket.on('connect', function() { socket.send("wheel connected") }); 
-            socket.on('message', function(data) { if("wheel"==data) run() }); 
-            socket.on('disconnect', function() { socket.send("wheel disconnected") });
+            socket.on('message', function(data) { if("wheel"==data) run(); });
             
 			/** Globals. */
 			var global = {
@@ -31,13 +29,6 @@
                 }
                 return a;
             }
-			
-			/** People list. */
-			var list = $.get("<%= users %>callback=?");
-            
-            /** Creating an array shuffled. */
-            var people = { "list": shuffle(list) };
-            console.log(people);
             
 			var randomize = function() {
 			    global.indice = Math.floor(Math.random()*people.list.length);
@@ -131,8 +122,23 @@
                 }
 			};
 		</script>
+		
 		<canvas id="canvas" width="350" height="506" style="position:absolute;"></canvas>
-		<input id="go" type="button" value="LET'S GO !!!" onclick="run();" style="position:absolute; margin-left:370px" />
-		<div id="winners" style="position:absolute; margin-left:470px"></div>
+		
+		<input id="go" type="button" value="LET'S GO !!!" onclick="run();" style="display:none; position:absolute; margin-left:370px" />
+		
+		<!--div id="winners" style="position:absolute; margin-left:470px"></div-->
+		<div id="winners" style="position:absolute; margin-left:370px"></div>
+		
+		<script type="application/javascript">
+			/** People list. */
+			var people;
+			var callback = function(data) { 
+			    people = { "list": shuffle(data) };
+                console.log(people);
+                draw();
+			}
+			$.ajax({url: "<%= users %>", crossDomain: true, dataType: "jsonp"});
+		</script>
 	</body>
 </html>

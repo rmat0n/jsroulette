@@ -2,15 +2,15 @@
 	<head>
         <script src="/socket.io/socket.io.js"></script>
     </head>
-	<body onload="draw()" style="background: whitesmoke">
+	<body style="background: whitesmoke">
         <script> 
-            var socket = new io.Socket(null, {port: 8080, rememberTransport: false}); 
+            var socket = new io.Socket(null, {port: 9010, rememberTransport: false}); 
             socket.connect();
-            socket.on('connect', function() { socket.send("button connected") }) 
-            socket.on('message', function(data) { if("wheel"!=data) alert(data); }) 
-            socket.on('disconnect', function() { socket.send("button disconnected") }) 
+            socket.on('message', function(data) { /*if("wheel"!=data) alert(data);*/ })
             var send = function() { socket.send("wheel"); }
+            var interval = setInterval(function() { socket.send('Stay tuned...'); }, 5000);
         </script>
-        <a href="#" onclick="send();">Click me</a>
+        <img src="http://farm5.static.flickr.com/4146/5410914413_fd23c5344f.jpg" width="100%" style="position:absolute; margin-top: 200px" />
+        <a href="#" onclick="send();" style="position:absolute; margin-top:490px; margin-left: 150px; font-size: 200px; color: white; text-decoration:none;">PUSH</a>
 	</body>
 </html>
