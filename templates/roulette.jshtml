@@ -1,5 +1,6 @@
 <html>
 	<head>
+    	<script src="http://code.jquery.com/jquery-1.5.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
     </head>
 	<body onload="draw()" style="background: whitesmoke">
@@ -32,51 +33,7 @@
             }
 			
 			/** People list. */
-			var index = 0;
-			var list = [];
-			list[index++] = { "firstname": "Erwan", "lastname": "ALLIAUME" };
-            list[index++] = { "firstname": "Christophe", "lastname": "AMORY" };
-            list[index++] = { "firstname": "Brice", "lastname": "ARGENSON" };
-            list[index++] = { "firstname": "Guillaume", "lastname": "ARNAUD" };
-            list[index++] = { "firstname": "Simon", "lastname": "CAPLETTE" };
-            list[index++] = { "firstname": "Hamza", "lastname": "BENMANSOUR" };
-            list[index++] = { "firstname": "Julien", "lastname": "BURET" };
-            list[index++] = { "firstname": "Guillaume", "lastname": "CARRE" };
-            list[index++] = { "firstname": "Laurent", "lastname": "DANGELA" };
-            list[index++] = { "firstname": "Nicolas", "lastname": "DEMENGEL" };
-            list[index++] = { "firstname": "Ellene", "lastname": "DIJOUX" };
-            list[index++] = { "firstname": "Frederic", "lastname": "DUBOIS" };
-            list[index++] = { "firstname": "Alexandre", "lastname": "DUTRA" };
-            list[index++] = { "firstname": "Amin", "lastname": "FATHALLAH" };
-            list[index++] = { "firstname": "Michael", "lastname": "FIGUIERE" };
-            list[index++] = { "firstname": "David", "lastname": "GALICHET" };
-            list[index++] = { "firstname": "Nabil", "lastname": "GASRI" };
-            list[index++] = { "firstname": "Benoit", "lastname": "GUEROUT" };
-            list[index++] = { "firstname": "Nicolas", "lastname": "GRISO" };
-            list[index++] = { "firstname": "Christophe", "lastname": "HEUBES" };
-            list[index++] = { "firstname": "Nicolas", "lastname": "JOZWIAK" };
-            list[index++] = { "firstname": "Alexis", "lastname": "KINSELLA" };
-            list[index++] = { "firstname": "Cyrille", "lastname": "LECLERC" };
-            list[index++] = { "firstname": "Nicolas", "lastname": "LECOZ" };
-            list[index++] = { "firstname": "Seven", "lastname": "LEMESLE" };
-            list[index++] = { "firstname": "Pablo", "lastname": "LOPEZ" };
-            list[index++] = { "firstname": "Francois", "lastname": "MAROT" };
-            list[index++] = { "firstname": "Aurelien", "lastname": "MASSE" };
-            list[index++] = { "firstname": "Romain", "lastname": "MATON" };
-            list[index++] = { "firstname": "Aurelien", "lastname": "MAURY" };
-            list[index++] = { "firstname": "Jean-Laurent", "lastname": "MORLHON" };
-            list[index++] = { "firstname": "Prisca", "lastname": "POLYTE" };
-            list[index++] = { "firstname": "Morgan", "lastname": "RENOU" };
-            list[index++] = { "firstname": "Nathaniel", "lastname": "RICHAND" };
-            list[index++] = { "firstname": "Jean-Louis", "lastname": "RIGAU" };
-            list[index++] = { "firstname": "Romain", "lastname": "SCHLICK" };
-            list[index++] = { "firstname": "Emmanuel", "lastname": "SERVENT" };
-            list[index++] = { "firstname": "Julien", "lastname": "SMEDJA" };
-            list[index++] = { "firstname": "Mathieu", "lastname": "MINH" };
-            list[index++] = { "firstname": "Matthieu", "lastname": "DUMAS" };
-            list[index++] = { "firstname": "Yves", "lastname": "AMSELLEM" };
-            list[index++] = { "firstname": "Katia", "lastname": "ARESTI GONZALEZ" };
-            list[index++] = { "firstname": "Laurent", "lastname": "PEREZ" };
+			var list = $.get("<%= users %>callback=?");
             
             /** Creating an array shuffled. */
             var people = { "list": shuffle(list) };
