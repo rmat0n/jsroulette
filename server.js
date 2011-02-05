@@ -24,7 +24,7 @@ meryl.h('GET /', function (req, resp) {
     }
 });
 var server = http.createServer(meryl.cgi(opts));
-server.listen(9010);
+server.listen(8333);
 
 var socket = io.listen(server);
 
