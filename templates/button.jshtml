@@ -21,7 +21,7 @@
             var interval = setInterval(function() { socket.send({'type':'keep connection'}); }, 5000);
         </script>
         <img src="http://farm5.static.flickr.com/4146/5410914413_fd23c5344f.jpg" width="120px" style="position:absolute" />
-        <a href="#" onclick="send();" style="position:absolute; margin-top:42px; margin-left:22px; font-size:30px; color:white; text-decoration:none;">PUSH</a>
+        <a href="" onclick="send();return false;" style="position:absolute; margin-top:42px; margin-left:22px; font-size:30px; color:white; text-decoration:none;">PUSH</a>
         <div id="results" style="position:absolute; margin-top:130px"></div>
 	</body>
 </html>
