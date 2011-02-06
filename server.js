@@ -36,5 +36,5 @@ console.log("http://localhost:8333?theme=mobile");
 
 var socket = io.listen(server);
 socket.on('connection', function(client) {
-    client.on('message', function(data) { client.broadcast(data); });
+    client.on('message', function(data) { sys.debug(data); client.broadcast(data); });
 }); 

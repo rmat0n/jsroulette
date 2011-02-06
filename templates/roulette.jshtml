@@ -135,7 +135,7 @@
                     console.log("Winner : "+global.winnerIndex%people.list.length+", "+winner.value);
                     $("#winners").html($("#winners").html()+"<div>"+winner.value+"<\/div>");
                     $("#go").removeAttr("disabled");
-                    socket.send({"profile":$.urlParam("profile"), "type":"winner", "value":winner.value});
+                    socket.send({"profile":$.urlParam("profile"), "type":"winner", "winner":winner.value});
                 }
 			};
 		</script>
