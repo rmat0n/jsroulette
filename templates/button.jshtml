@@ -1,16 +1,27 @@
 <html>
 	<head>
+        <script src="http://code.jquery.com/jquery-1.5.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
+        <script type="text/javascript">
+            $.urlParam = function(name){
+                var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+                return (results && results[1]) || 0;
+            }
+        </script>
+        <style type="text/css">
+            #results > div:first-child{font-weight:bold;}
+        </style>
     </head>
-	<body style="background: whitesmoke">
+	<body>
         <script> 
             var socket = new io.Socket(null, {port: 8333, rememberTransport: false}); 
             socket.connect();
-            socket.on('message', function(data) { /*if("wheel"!=data) alert(data);*/ })
+            socket.on('message', function(data) { if($.urlParam("profile")==data.profile && "winner"==data.type) $("#results").prepend("<div>"+data+"</div>") })
             var send = function() { socket.send("wheel"); }
-            var interval = setInterval(function() { socket.send('Stay tuned...'); }, 5000);
+            var interval = setInterval(function() { socket.send({'type':'keep connection'}); }, 5000);
         </script>
-        <img src="http://farm5.static.flickr.com/4146/5410914413_fd23c5344f.jpg" width="100%" style="position:absolute; margin-top: 200px" />
-        <a href="#" onclick="send();" style="position:absolute; margin-top:490px; margin-left: 150px; font-size: 200px; color: white; text-decoration:none;">PUSH</a>
+        <img src="http://farm5.static.flickr.com/4146/5410914413_fd23c5344f.jpg" width="120px" style="position:absolute" />
+        <a href="#" onclick="send();" style="position:absolute; margin-top:42px; margin-left:22px; font-size:30px; color:white; text-decoration:none;">PUSH</a>
+        <div id="results" style="position:absolute; margin-top:130px"></div>
 	</body>
 </html>

@@ -1,7 +1,6 @@
 var http = require('http');
 var url = require('url');
 var fs = require('fs');
-var io = require('socket.io');
 var sys = require(process.binding('natives').util ? 'util' : 'sys');
 var meryl = require('meryl');
 

@@ -1,14 +1,21 @@
 <html>
 	<head>
     	<script src="http://code.jquery.com/jquery-1.5.min.js"></script>
+        <script src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
+        <script type="text/javascript">
+            $.urlParam = function(name){
+                var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+                return (results && results[1]) || 0;
+            }
+        </script>
     </head>
 	<body style="background: whitesmoke">
 		<script type="application/javascript">
 		    /** Web Socket. */
             var socket = new io.Socket(null, {port: 8333, rememberTransport: false}); 
             socket.connect();
-            socket.on('message', function(data) { if("wheel"==data) run(); });
+            socket.on('message', function(data) { if($.urlParam("profile")==data.profile && "wheel"==data.type) run(); });
             
 			/** Globals. */
 			var global = {
@@ -46,7 +53,7 @@
 			
 			/** Run wheel. */
 			var run = function() {
-			    document.getElementById("go").disabled=true;
+			    $("#go").attr("disabled", "disabled");
 			    if(global.intervalId) people.list.splice(global.winnerIndex%people.list.length, 1);
                 global.indice=0;
                 global.speedIndex=0;
@@ -62,12 +69,14 @@
                         || (global.speedIndex<80 && global.speedIndex%9==0) || global.speedIndex==80) {
                         
                     // Canvas object
-                    var canvas = document.getElementById("canvas");  
+                    var canvas = document.getElementById("canvas");
                     var ctx = canvas.getContext("2d");
                       
                     // Background color
-                    ctx.fillStyle = "lightblue";  
+                    ctx.fillStyle = "lightblue";
+                    ctx.beginPath();
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.closePath();
                       
                     // Rectangles
                     ctx.strokeStyle = "white";
@@ -76,7 +85,9 @@
                     for(var i in people.list) {
                        if(rectPos < canvas.height) {
                             var index = parseInt(i);
+                            ctx.beginPath();
                             ctx.strokeRect(1, rectPos, canvas.width-2, rectHauteur(index));
+                            ctx.closePath();
                             rectPos += rectHauteur(index);
                        }
                     }
@@ -84,13 +95,17 @@
                     // Triangles
                     ctx.fillStyle = "white";
                     ctx.lineWidth = 3;
+                    ctx.beginPath();
                     ctx.moveTo(1, canvas.height/2-10);
                     ctx.lineTo(20,canvas.height/2);
                     ctx.lineTo(1,canvas.height/2+10);
+                    ctx.closePath();
                     ctx.fill();
+                    ctx.beginPath();
                     ctx.moveTo(canvas.width-1, canvas.height/2-10);
                     ctx.lineTo(canvas.width-21,canvas.height/2);
                     ctx.lineTo(canvas.width-1,canvas.height/2+10);
+                    ctx.closePath();
                     ctx.fill();
                       
                     // Print people
@@ -99,10 +114,12 @@
                     var textPos = 17.5;
                     for(var i in people.list) {
                        var index = parseInt(i);
-                       ctx.font = textFont(index)+"pt Arial";
+                       ctx.beginPath();
+                       ctx.font = textFont(index)+"px 'Arial'";
                        if(22==textFont(index)) global.winnerIndex=global.indice+index;
                        var peopleIndex = (global.indice+index)%people.list.length;
-                       ctx.fillText(people.list[peopleIndex].firstname+" "+people.list[peopleIndex].lastname, canvas.width/2, textPos);
+                       if(textFont(index)>=10)ctx.fillText(people.list[peopleIndex].value, canvas.width/2, textPos);
+                       ctx.closePath();
                        textPos += textHauteur(index);
                     }
                     global.indice++;
@@ -114,31 +131,59 @@
                 // Manage ending
                 if(global.speedIndex==80) {
                     clearInterval(global.intervalId);
-                    document.getElementById("go").disabled=false;
                     var winner = people.list[global.winnerIndex%people.list.length];
-                    console.log("Winner : " + global.winnerIndex%people.list.length + ", " + winner.firstname + " " + winner.lastname);
-                    document.getElementById("winners").innerHTML = document.getElementById("winners").innerHTML + "<div>"+winner.firstname+" "+winner.lastname+"<\/div>";
-                    socket.send(winner.firstname + " " + winner.lastname);
+                    console.log("Winner : "+global.winnerIndex%people.list.length+", "+winner.value);
+                    $("#winners").html($("#winners").html()+"<div>"+winner.value+"<\/div>");
+                    $("#go").removeAttr("disabled");
+                    socket.send({"profile":$.urlParam("profile"), "type":"winner", "value":winner.value});
                 }
 			};
 		</script>
+        
+		<canvas id="canvas" width="350px" height="506px" style="position:absolute;"></canvas>
+    	
+        <div style="position:absolute; margin-top:510px;"><a href="" onclick="$('#configuration').toggle();return false;" style="text-decoration: none;">Configuration...</a></div>
+        <div id="configuration" style='position:absolute; display: none; margin-top:525px;'>
+            <br />
+            <div><strong>Required by roulette :</strong> [{value:"something"}, {value:"another one"}, ...] <em>(array of JSON objet with value attribute)</em></div>
+            <br />
+            <div><label for="values">REST : </label><input id="values" type="text" size="82" /></div>
+        	<div><label for="transformer">Transformer (value at x) : </label><input id="transformer" type="text" size="59" /></div>
+            <div><a href="" onclick="getPeople();return false;">GET</a></div>
+            <br />
+            <div><em>REST example : </em><strong>http://your.api/people</strong> returning [{firstname:"foo", lastname:"bar"}, ...]</div>
+            <div><em>Transformer example : </em><strong>x.firstname+" "+x.lastname</strong> will transform your REST call to [{value: "foo bar", ...}]</div>
+    	</div>
 		
-		<canvas id="canvas" width="350" height="506" style="position:absolute;"></canvas>
+		<input id="go" type="button" value="LET'S GO !!!" onclick="run();" style="position:absolute; margin-left:370px" />
 		
-		<input id="go" type="button" value="LET'S GO !!!" onclick="run();" style="display:none; position:absolute; margin-left:370px" />
-		
-		<!--div id="winners" style="position:absolute; margin-left:470px"></div-->
-		<div id="winners" style="position:absolute; margin-left:370px"></div>
+		<div id="winners" style="position:absolute;"></div>
 		
 		<script type="application/javascript">
-			/** People list. */
-			var people;
-			var callback = function(data) { 
-			    people = { "list": shuffle(data) };
+    	    /** Manage mobile button. */
+            if($.urlParam("profile")=="") {
+                $("#go").show();
+                $("#winners").css("margin-left", "470px");
+            } else {
+                $("#go").hide();
+                $("#winners").css("margin-left", "370px");
+            }
+    	    /** People list. */
+	        var people;
+            var callback = function(data) {
+                var transformer = $("#transformer").val();
+                console.log(transformer);
+                people = { "list": shuffle(_.map(data, function(x) { return $("#values").val()!="" && transformer!="" ? {"value": eval(transformer).replace(/%20/, " ")} : x; })) };
                 console.log(people);
                 draw();
-			}
-			$.ajax({url: "<%= users %>", crossDomain: true, dataType: "jsonp"});
+            };
+    	    var getPeople = function() {
+        		var users = <%= users %>;
+            	if($("#values").val()!="") $.ajax({url: $("#values").val(), crossDomain: true, dataType: "jsonp", jsonp: false});
+                else if($.isArray(users)) callback(users);
+                else $.ajax({url: users, crossDomain: true, dataType: "jsonp", jsonp: false});
+    	    };
+            getPeople();
 		</script>
 	</body>
 </html>
